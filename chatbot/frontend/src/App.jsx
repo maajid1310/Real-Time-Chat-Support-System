@@ -1,11 +1,13 @@
-import Login from "./pages/Login/Login";
+import React from 'react';
+import AppRoutes from './routes/AppRoutes';
+import './App.css';
 
 function App() {
-    return (
-        <div>
-            <Login />
-        </div>
-    );
+  return (
+    <div className="App">
+      <AppRoutes />
+    </div>
+  );
 }
 
 export default App;
