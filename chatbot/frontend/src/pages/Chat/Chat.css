@@ -1,0 +1,15 @@
+.chat-page {
+  min-height: 100vh;
+  background: #f0f2f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.chat-page-container {
+  width: 100%;
+  max-width: 760px;
+  height: 80vh;
+  min-height: 500px;
+}

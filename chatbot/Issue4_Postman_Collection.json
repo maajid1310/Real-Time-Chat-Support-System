@@ -1,0 +1,272 @@
+{
+  "info": {
+    "name": "Issue 4 - WebSocket Messaging System",
+    "description": "Complete Postman collection for testing the Real-Time Chat Support System WebSocket and REST Message APIs.\n\n## Setup\n1. Set environment variable `base_url` = `http://localhost:8080`\n2. Set environment variable `token` = JWT from login response\n3. Set environment variable `session_id` = a valid chat session ID\n\n## Flow\n1. Login → copy token\n2. Create/get a chat session ID\n3. Test REST message history\n4. Test WebSocket via Postman WebSocket client",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url",   "value": "http://localhost:8080" },
+    { "key": "token",      "value": "" },
+    { "key": "session_id", "value": "1" },
+    { "key": "message_id", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "01 - Auth",
+      "item": [
+        {
+          "name": "Register Customer",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/auth/register" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Customer\",\n  \"email\": \"customer@test.com\",\n  \"password\": \"Password123!\",\n  \"phone\": \"1234567890\",\n  \"role\": \"CUSTOMER\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Register Agent",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/auth/register" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Agent\",\n  \"lastName\": \"Smith\",\n  \"email\": \"agent@test.com\",\n  \"password\": \"Password123!\",\n  \"phone\": \"9876543210\",\n  \"role\": \"AGENT\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login Customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.success && json.data.token) {",
+                  "    pm.environment.set('token', json.data.token);",
+                  "    pm.environment.set('user_id', json.data.userId);",
+                  "    console.log('Token saved:', json.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/auth/login" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"customer@test.com\",\n  \"password\": \"Password123!\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login Agent",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.success && json.data.token) {",
+                  "    pm.environment.set('token', json.data.token);",
+                  "    console.log('Agent token saved.');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/auth/login" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"agent@test.com\",\n  \"password\": \"Password123!\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 - Message History (REST)",
+      "item": [
+        {
+          "name": "GET Message History - Page 0 Size 20",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/messages/{{session_id}}?page=0&size=20",
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET Message History - Page 1 Size 20",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/messages/{{session_id}}?page=1&size=20",
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "size", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET Message History - Page 0 Size 5 (small pages)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/messages/{{session_id}}?page=0&size=5",
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "5" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET Message History - Invalid Session (404)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/api/messages/99999?page=0&size=20" }
+          }
+        },
+        {
+          "name": "GET Message History - No Auth (401)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/messages/{{session_id}}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 - Unread Count (REST)",
+      "item": [
+        {
+          "name": "GET Unread Count for Session",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/api/messages/{{session_id}}/unread" }
+          }
+        },
+        {
+          "name": "GET Unread Count - Invalid Session (404)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/api/messages/99999/unread" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 - Message Status Update (REST)",
+      "item": [
+        {
+          "name": "PUT Update Status - SENT to DELIVERED",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/api/messages/{{message_id}}/status" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"messageId\": {{message_id}},\n  \"sessionId\": {{session_id}},\n  \"status\": \"DELIVERED\"\n}"
+            }
+          }
+        },
+        {
+          "name": "PUT Update Status - DELIVERED to READ",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/api/messages/{{message_id}}/status" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"messageId\": {{message_id}},\n  \"sessionId\": {{session_id}},\n  \"status\": \"READ\"\n}"
+            }
+          }
+        },
+        {
+          "name": "PUT Update Status - Invalid Backward Transition (400)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/api/messages/{{message_id}}/status" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"messageId\": {{message_id}},\n  \"sessionId\": {{session_id}},\n  \"status\": \"SENT\"\n}"
+            }
+          }
+        },
+        {
+          "name": "PUT Update Status - Message Not Found (404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/api/messages/99999/status" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"messageId\": 99999,\n  \"sessionId\": {{session_id}},\n  \"status\": \"DELIVERED\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 - WebSocket (Manual Steps)",
+      "item": [
+        {
+          "name": "WebSocket Connect Instructions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "http://localhost:8080/ws?token={{token}}" },
+            "description": "## WebSocket Testing Steps\n\n### Using Postman WebSocket Client:\n1. Open Postman → New → WebSocket Request\n2. URL: `ws://localhost:8080/ws?token={{token}}`\n3. Click Connect\n4. Select STOMP subprotocol\n\n### STOMP CONNECT Frame:\n```\nCONNECT\naccept-version:1.2\nheart-beat:4000,4000\n\n\\0\n```\n\n### Subscribe to chat:\n```\nSUBSCRIBE\nid:sub-0\ndestination:/topic/chat/1\n\n\\0\n```\n\n### Send a message:\n```\nSEND\ndestination:/app/chat.send\ncontent-type:application/json\n\n{\"sessionId\":1,\"content\":\"Hello from Postman!\"}\n\\0\n```\n\n### Subscribe to typing:\n```\nSUBSCRIBE\nid:sub-1\ndestination:/topic/typing/1\n\n\\0\n```\n\n### Send typing indicator:\n```\nSEND\ndestination:/app/chat.typing\ncontent-type:application/json\n\n{\"sessionId\":1,\"typing\":true}\n\\0\n```\n\n### Subscribe to status:\n```\nSUBSCRIBE\nid:sub-2\ndestination:/topic/status/1\n\n\\0\n```\n\n### Update status:\n```\nSEND\ndestination:/app/chat.status\ncontent-type:application/json\n\n{\"messageId\":1,\"sessionId\":1,\"status\":\"DELIVERED\"}\n\\0\n```"
+          }
+        }
+      ]
+    }
+  ]
+}

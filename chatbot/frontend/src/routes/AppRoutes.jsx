@@ -7,10 +7,13 @@ import ProtectedRoute from '../components/common/ProtectedRoute';
 import Login from '../pages/Login/Login';
 import Register from '../pages/Register/Register';
 
-// Dashboard Pages (placeholders for now)
+// Dashboard Pages
 import AdminDashboard from '../pages/AdminDashboard/AdminDashboard';
 import AgentDashboard from '../pages/AgentDashboard/AgentDashboard';
 import CustomerDashboard from '../pages/CustomerDashboard/CustomerDashboard';
+
+// Chat Page
+import ChatPage from '../pages/Chat/ChatPage';
 
 const AppRoutes = () => {
   return (
@@ -18,7 +21,7 @@ const AppRoutes = () => {
       <AuthProvider>
         <Routes>
           {/* Public Routes */}
-          <Route path="/login" element={<Login />} />
+          <Route path="/login"    element={<Login />} />
           <Route path="/register" element={<Register />} />
 
           {/* Protected Routes - Admin */}
@@ -51,11 +54,19 @@ const AppRoutes = () => {
             }
           />
 
+          {/* Chat Route - accessible by CUSTOMER and AGENT */}
+          <Route
+            path="/chat/:sessionId"
+            element={
+              <ProtectedRoute allowedRoles={['CUSTOMER', 'AGENT', 'ADMIN']}>
+                <ChatPage />
+              </ProtectedRoute>
+            }
+          />
+
           {/* Default Route */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          
-          {/* 404 Route */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route path="/"  element={<Navigate to="/login" replace />} />
+          <Route path="*"  element={<Navigate to="/login" replace />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

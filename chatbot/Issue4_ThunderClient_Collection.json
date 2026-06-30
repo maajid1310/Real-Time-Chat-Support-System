@@ -1,0 +1,194 @@
+{
+  "clientName": "Thunder Client",
+  "collectionName": "Issue 4 - WebSocket Messaging System",
+  "collectionId": "issue4-websocket-messaging",
+  "dateExported": "2026-01-01",
+  "version": "1.2",
+  "folders": [
+    { "id": "f1", "name": "01 Auth",            "containerId": "" },
+    { "id": "f2", "name": "02 Message History",  "containerId": "" },
+    { "id": "f3", "name": "03 Unread Count",     "containerId": "" },
+    { "id": "f4", "name": "04 Status Update",    "containerId": "" }
+  ],
+  "requests": [
+    {
+      "id": "r01",
+      "colId": "issue4-websocket-messaging",
+      "containerId": "f1",
+      "name": "Register Customer",
+      "url": "http://localhost:8080/api/auth/register",
+      "method": "POST",
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Customer\",\n  \"email\": \"customer@test.com\",\n  \"password\": \"Password123!\",\n  \"phone\": \"1234567890\",\n  \"role\": \"CUSTOMER\"\n}"
+      }
+    },
+    {
+      "id": "r02",
+      "colId": "issue4-websocket-messaging",
+      "containerId": "f1",
+      "name": "Register Agent",
+      "url": "http://localhost:8080/api/auth/register",
+      "method": "POST",
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"firstName\": \"Agent\",\n  \"lastName\": \"Smith\",\n  \"email\": \"agent@test.com\",\n  \"password\": \"Password123!\",\n  \"phone\": \"9876543210\",\n  \"role\": \"AGENT\"\n}"
+      }
+    },
+    {
+      "id": "r03",
+      "colId": "issue4-websocket-messaging",
+      "containerId": "f1",
+      "name": "Login Customer",
+      "url": "http://localhost:8080/api/auth/login",
+      "method": "POST",
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"email\": \"customer@test.com\",\n  \"password\": \"Password123!\"\n}"
+      }
+    },
+    {
+      "id": "r04",
+      "colId": "issue4-websocket-messaging",
+      "containerId": "f1",
+      "name": "Login Agent",
+      "url": "http://localhost:8080/api/auth/login",
+      "method": "POST",
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"email\": \"agent@test.com\",\n  \"password\": \"Password123!\"\n}"
+      }
+    },
+    {
+      "id": "r05",
+      "colId": "issue4-websocket-messaging",
+      "containerId": "f2",
+      "name": "GET Message History - Page 0 Size 20",
+      "url": "http://localhost:8080/api/messages/1?page=0&size=20",
+      "method": "GET",
+      "headers": [{ "name": "Authorization", "value": "Bearer YOUR_JWT_TOKEN_HERE" }]
+    },
+    {
+      "id": "r06",
+      "colId": "issue4-websocket-messaging",
+      "containerId": "f2",
+      "name": "GET Message History - Page 1 Size 20",
+      "url": "http://localhost:8080/api/messages/1?page=1&size=20",
+      "method": "GET",
+      "headers": [{ "name": "Authorization", "value": "Bearer YOUR_JWT_TOKEN_HERE" }]
+    },
+    {
+      "id": "r07",
+      "colId": "issue4-websocket-messaging",
+      "containerId": "f2",
+      "name": "GET Message History - Small Page Size 5",
+      "url": "http://localhost:8080/api/messages/1?page=0&size=5",
+      "method": "GET",
+      "headers": [{ "name": "Authorization", "value": "Bearer YOUR_JWT_TOKEN_HERE" }]
+    },
+    {
+      "id": "r08",
+      "colId": "issue4-websocket-messaging",
+      "containerId": "f2",
+      "name": "GET Message History - Invalid Session 404",
+      "url": "http://localhost:8080/api/messages/99999?page=0&size=20",
+      "method": "GET",
+      "headers": [{ "name": "Authorization", "value": "Bearer YOUR_JWT_TOKEN_HERE" }]
+    },
+    {
+      "id": "r09",
+      "colId": "issue4-websocket-messaging",
+      "containerId": "f2",
+      "name": "GET Message History - No Auth 401",
+      "url": "http://localhost:8080/api/messages/1",
+      "method": "GET",
+      "headers": []
+    },
+    {
+      "id": "r10",
+      "colId": "issue4-websocket-messaging",
+      "containerId": "f3",
+      "name": "GET Unread Count",
+      "url": "http://localhost:8080/api/messages/1/unread",
+      "method": "GET",
+      "headers": [{ "name": "Authorization", "value": "Bearer YOUR_JWT_TOKEN_HERE" }]
+    },
+    {
+      "id": "r11",
+      "colId": "issue4-websocket-messaging",
+      "containerId": "f3",
+      "name": "GET Unread Count - Invalid Session 404",
+      "url": "http://localhost:8080/api/messages/99999/unread",
+      "method": "GET",
+      "headers": [{ "name": "Authorization", "value": "Bearer YOUR_JWT_TOKEN_HERE" }]
+    },
+    {
+      "id": "r12",
+      "colId": "issue4-websocket-messaging",
+      "containerId": "f4",
+      "name": "PUT Update Status - SENT to DELIVERED",
+      "url": "http://localhost:8080/api/messages/1/status",
+      "method": "PUT",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer YOUR_JWT_TOKEN_HERE" },
+        { "name": "Content-Type",  "value": "application/json" }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"messageId\": 1,\n  \"sessionId\": 1,\n  \"status\": \"DELIVERED\"\n}"
+      }
+    },
+    {
+      "id": "r13",
+      "colId": "issue4-websocket-messaging",
+      "containerId": "f4",
+      "name": "PUT Update Status - DELIVERED to READ",
+      "url": "http://localhost:8080/api/messages/1/status",
+      "method": "PUT",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer YOUR_JWT_TOKEN_HERE" },
+        { "name": "Content-Type",  "value": "application/json" }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"messageId\": 1,\n  \"sessionId\": 1,\n  \"status\": \"READ\"\n}"
+      }
+    },
+    {
+      "id": "r14",
+      "colId": "issue4-websocket-messaging",
+      "containerId": "f4",
+      "name": "PUT Update Status - Bad Backward Transition 400",
+      "url": "http://localhost:8080/api/messages/1/status",
+      "method": "PUT",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer YOUR_JWT_TOKEN_HERE" },
+        { "name": "Content-Type",  "value": "application/json" }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"messageId\": 1,\n  \"sessionId\": 1,\n  \"status\": \"SENT\"\n}"
+      }
+    },
+    {
+      "id": "r15",
+      "colId": "issue4-websocket-messaging",
+      "containerId": "f4",
+      "name": "PUT Update Status - Message Not Found 404",
+      "url": "http://localhost:8080/api/messages/99999/status",
+      "method": "PUT",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer YOUR_JWT_TOKEN_HERE" },
+        { "name": "Content-Type",  "value": "application/json" }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"messageId\": 99999,\n  \"sessionId\": 1,\n  \"status\": \"DELIVERED\"\n}"
+      }
+    }
+  ]
+}
