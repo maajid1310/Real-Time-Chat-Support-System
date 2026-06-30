@@ -94,6 +94,16 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handle forbidden access (insufficient permissions)
+     */
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ApiResponse> handleForbidden(ForbiddenException ex) {
+        
+        ApiResponse response = ApiResponse.error(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
+    /**
      * Handle expired JWT token
      */
     @ExceptionHandler(ExpiredJwtException.class)

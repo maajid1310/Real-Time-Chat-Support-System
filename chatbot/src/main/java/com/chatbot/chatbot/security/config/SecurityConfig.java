@@ -28,7 +28,7 @@ import com.chatbot.chatbot.security.jwt.JwtAuthenticationEntryPoint;
  */
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -90,6 +90,11 @@ public class SecurityConfig {
                     "/swagger-ui.html",       // Swagger UI HTML page
                     "/ws/**"                  // WebSocket connections
                 ).permitAll()
+                
+                // ROLE-BASED Endpoints - Require specific roles
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/agent/**").hasRole("AGENT")
+                .requestMatchers("/api/customer/**").hasRole("CUSTOMER")
                 
                 // PROTECTED Endpoints - Authentication required
                 // All other endpoints require valid JWT token

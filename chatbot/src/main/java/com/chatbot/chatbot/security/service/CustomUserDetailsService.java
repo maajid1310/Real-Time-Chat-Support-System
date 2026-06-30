@@ -48,26 +48,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
-        // Convert to Spring Security UserDetails
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                user.isActive(),
-                true, // accountNonExpired
-                true, // credentialsNonExpired
-                true, // accountNonLocked
-                getAuthorities(user)
-        );
-    }
-
-    /**
-     * Get user authorities (roles).
-     * 
-     * Converts role name to Spring Security GrantedAuthority.
-     * Format: "ROLE_ADMIN", "ROLE_AGENT", "ROLE_CUSTOMER"
-     */
-    private Collection<? extends GrantedAuthority> getAuthorities(User user) {
-        String roleName = "ROLE_" + user.getRole().getRoleName();
-        return Collections.singletonList(new SimpleGrantedAuthority(roleName));
+        // Return CustomUserDetails that wraps our User entity
+        return new CustomUserDetails(user);
     }
 }
